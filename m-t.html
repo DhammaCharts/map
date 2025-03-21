@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Image Viewer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.2.2/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+
+    <style>
+        html, body { margin: 0; height: 100%; width: 100%; overflow: hidden; }
+        #map { width: 100%; height: 100%; background-color: rgb(0, 0, 0);
+        }
+        .ol-control { font-size: 14px; }
+    </style>
+</head>
+
+
+<body>
+    <div id="map" class="map"></div>
+    <script>
+
+        		// url behaviour
+
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const mapUrl = urlParams.get('n')
+        const width = urlParams.get('w');
+        const height = urlParams.get('h') || width;
+        const extent = [0, 0, width, height];
+
+        const projection = new ol.proj.Projection({
+            code: 'pixels',
+            units: 'pixels',
+            extent: extent,
+        });
+
+        const overlay = new ol.Overlay({
+            element: document.createElement('div'),
+        });
+
+        const map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    preload: Infinity,
+                    extent: extent,
+                    source: new ol.source.TileImage({
+                        url: './' + mapUrl + '/{z}/{y}/{x}.png',
+                    })
+                })
+            ],
+            overlays: [overlay],
+            target: 'map',
+            view: new ol.View({
+                projection: projection,
+                center: ol.extent.getCenter(extent),
+                zoom: 2,
+                maxZoom: 6
+            }),
+            
+        });
+    </script>
+</body>
+
+</html>
